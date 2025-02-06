@@ -1,0 +1,15 @@
+bot : Hi There! I am a banking chatbot. You can begin conversation by typing in a message and pressing enter.
+user : I want to create account.
+bot : - What type of loan are you looking at ?1)House loan 2)Gold loan 3)Topup loan 3)Vehicle loan 4)Student loan
+user : I want to create new account.
+bot : - Great! Please take the following documents and head towards the nearest branch .1)Aadhar Card 2)Pan card 3) Passport size photos
+user : hi
+bot : - Hello. How are you today?
+user : I am fine
+bot : - How I can help you further?
+user : I want to create new account.
+bot : - Great! Please take the following documents and head towards the nearest branch .1)Aadhar Card 2)Pan card 3) Passport size photos
+user : ok
+bot : - What queries do you have regarding mobile banking.
+user : No
+bot : - PLease approach the bank with the following documets .1)Acceptance Letter from Institution 2)Pan card 3) Passport size photos

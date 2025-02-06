@@ -1,0 +1,157 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Bank Chatbot</title>
+    {% load static %}
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            background-color: #f1f1f1;
+            margin: 0;
+            padding: 0;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            height: 100vh;
+        }
+        .chat-container {
+            background-color: #fff;
+            width: 400px;
+            height: 500px;
+            border-radius: 10px;
+            box-shadow: 0 5px 15px rgba(0, 0, 0, 0.1);
+            display: flex;
+            flex-direction: column;
+        }
+        .chat-header {
+            background-color: #4CAF50;
+            color: white;
+            padding: 15px;
+            text-align: center;
+            border-radius: 10px 10px 0 0;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            position: relative;
+        }
+        .chat-header img {
+            height: 40px;
+            margin-right: 10px; /* Space between logo and heading */
+        }
+        .chat-box {
+            flex-grow: 1;
+            padding: 10px;
+            overflow-y: auto;
+            height: 100%;
+            background-color: #f9f9f9;
+            border-radius: 0 0 10px 10px;
+        }
+        .chat-box .bot-message, .chat-box .user-message {
+            margin: 10px 0;
+            padding: 10px;
+            border-radius: 10px;
+        }
+        .bot-message {
+            background-color: #e1f5fe;
+            text-align: left;
+        }
+        .user-message {
+            background-color: #dcedc8;
+            text-align: right;
+        }
+        .input-box {
+            display: flex;
+            padding: 10px;
+            border-top: 1px solid #ccc;
+        }
+        .input-box input {
+            flex-grow: 1;
+            padding: 10px;
+            border-radius: 20px;
+            border: 1px solid #ccc;
+        }
+        .input-box button {
+            background-color: #4CAF50;
+            color: white;
+            padding: 10px;
+            border-radius: 50%;
+            border: none;
+            margin-left: 10px;
+            cursor: pointer;
+        }
+        .input-box button:hover {
+            background-color: #45a049;
+        }
+    </style>
+</head>
+<body>
+
+<div class="chat-container">
+    <div class="chat-header">
+        <h3>Bank Chatbot</h3>
+        <img src="{% static 'images/logo.png' %}" alt="Bank Logo">
+    </div>
+    <div class="chat-box" id="chat-box">
+        <!-- Chat messages will appear here -->
+    </div>
+    <div class="input-box">
+        <input type="text" id="user-input" placeholder="Ask something..." onkeypress="checkEnter(event)" />
+        <button onclick="sendMessage()">Send</button>
+    </div>
+</div>
+
+<!-- CSRF Token for Django -->
+<form method="POST" style="display: none;">
+    {% csrf_token %}
+</form>
+
+<script>
+    // Function to append messages to chat
+    function appendMessage(message, type) {
+        const chatBox = document.getElementById('chat-box');
+        const messageDiv = document.createElement('div');
+        messageDiv.classList.add(type);
+        messageDiv.innerText = message;
+        chatBox.appendChild(messageDiv);
+        chatBox.scrollTop = chatBox.scrollHeight;
+    }
+
+    // Function to send user input
+    function sendMessage() {
+        const userInput = document.getElementById('user-input').value;
+        if (userInput.trim()) {
+            appendMessage(userInput, 'user-message'); // Show user message
+            document.getElementById('user-input').value = ''; // Clear input field
+
+            // Get the CSRF token from the page
+            const csrfToken = document.querySelector('[name=csrfmiddlewaretoken]').value;
+
+            // Send AJAX request to get bot's response
+            fetch('/chatbot/chatbot-api/', {
+                method: 'POST',
+                body: new URLSearchParams({ 'user_input': userInput }),
+                headers: {
+                    'Content-Type': 'application/x-www-form-urlencoded',
+                    'X-CSRFToken': csrfToken  // Add CSRF token here
+                }
+            })
+            .then(response => response.json())
+            .then(data => {
+                appendMessage(data.response, 'bot-message'); // Show bot response
+            })
+            .catch(error => console.error('Error:', error));
+        }
+    }
+
+    // Function to check if the Enter key is pressed
+    function checkEnter(event) {
+        if (event.key === "Enter") {
+            sendMessage();  // Send the message if Enter is pressed
+        }
+    }
+</script>
+
+</body>
+</html>
